@@ -2375,6 +2375,8 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
     if dump_flags['dump_lobs']:
         lobframes.close()
 
+    return exchange.publish_lob(time, lobframes, lob_verbose)
+
 #############################
 
 # # Below here is where we set up and run a whole series of experiments

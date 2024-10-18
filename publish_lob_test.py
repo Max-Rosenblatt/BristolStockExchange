@@ -1,9 +1,14 @@
+import numpy as np
+import csv
+import random
+from BSE import market_session
+
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
 import random
 
-from BSE import market_session
+import BSE
 
 
 start_time = 0
@@ -37,20 +42,6 @@ dump_flags = {'dump_blotters': True,
               'dump_avgbals': True,
               'dump_tape': True}
 
-market_session(trial_id, start_time, end_time, traders_spec, order_sched, dump_flags, verbose)
+public_data = BSE.market_session(trial_id, start_time, end_time, traders_spec, order_sched, dump_flags, verbose)
 
-prices_fname = trial_id + '_tape.csv'
-x = np.empty(0)
-y = np.empty(0)
-with open(prices_fname, newline='') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        time = float(row[1])
-        price = float(row[2])
-        x = np.append(x,time)
-        y = np.append(y,price)
-
-plt.plot(x, y, '.', color='black')
-plt.xlabel('Time/s')
-plt.ylabel('Price/£')
-plt.show()
+print(public_data)
