@@ -77,14 +77,13 @@ verbose = False
 # 
 #%%
 
-trial_id = 'smith_chart_1'
-dump_flags = {'dump_blotters': True, 'dump_lobs': True, 'dump_strats': True,
-              'dump_avgbals': True, 'dump_tape': True}
+trial_id = 'Test'
+dump_flags = {'dump_blotters': False, 'dump_lobs': False, 'dump_strats': False,
+              'dump_avgbals': False, 'dump_tape': True}
 #%% md
 # And now we're ready to go... we'll run a market session, which dumps data to a file, and then we'll immediately read the file back and plot a graph of the transaction-price time-series.
 # 
 #%%
-random.seed(100) # changing the seed value will give us different seqences of random numbers
 
 market_session(trial_id, start_time, end_time, traders_spec, order_sched, dump_flags, verbose)
 

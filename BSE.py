@@ -375,24 +375,20 @@ class Exchange(Orderbook):
 
         if lob_file is not None:
             # build a linear character-string summary of only those prices on LOB with nonzero quantities
-            lobstring = 'Bid:,'
+            lobstring = ""
+
             n_bids = len(self.bids.lob_anon)
             if n_bids > 0:
-                lobstring += '%d,' % n_bids
                 for lobitem in self.bids.lob_anon:
-                    price_str = '%d,' % lobitem[0]
-                    qty_str = '%d,' % lobitem[1]
-                    lobstring = lobstring + price_str + qty_str
+                    lobstring = lobstring + str(f"B{lobitem[0]}") + ","
             else:
                 lobstring += '0,'
-            lobstring += 'Ask:,'
+
+
             n_asks = len(self.asks.lob_anon)
             if n_asks > 0:
-                lobstring += '%d,' % n_asks
                 for lobitem in self.asks.lob_anon:
-                    price_str = '%d,' % lobitem[0]
-                    qty_str = '%d,' % lobitem[1]
-                    lobstring = lobstring + price_str + qty_str
+                    lobstring = lobstring + str(f"A{lobitem[0]}") + ","
             else:
                 lobstring += '0,'
             # is this different to the last lob_string?
