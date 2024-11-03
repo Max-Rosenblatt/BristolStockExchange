@@ -15,7 +15,7 @@ order_interval = 5
 
 supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
 demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
-order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'periodic'}
+order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-poisson'}
 
 verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': False, 'dump_tape': True}
@@ -51,7 +51,7 @@ for i, trader_type in enumerate(trader_types):
             y = np.append(y, price)
 
     # Plot the data on the same graph using a different color
-    plt.plot(x, y, 'o', color=colors[i % len(colors)], label=f'{trader_type} Traders')
+    plt.plot(x, y, 'x', color=colors[i % len(colors)], label=f'{trader_type} Traders')
 
 # Finalize the plot with labels and legend
 plt.xlabel('Time/s')

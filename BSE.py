@@ -54,6 +54,7 @@ import random
 import os
 import time as chrono
 import json
+import csv
 
 from matplotlib.font_manager import json_dump
 
@@ -220,7 +221,7 @@ class Orderbook(Orderbook_half):
         self.tape = []
         self.tape_length = 10000    # max number of events on tape (so we can do millions of orders without crashing)
         self.quote_id = 0           # unique ID code for each quote accepted onto the book
-        self.lob_array = []        # character-string linearization of public lob items with nonzero quantities
+        self.lob_array = []
 
 
 # Exchange's internal orderbook
@@ -377,30 +378,13 @@ class Exchange(Orderbook):
         public_data['tape'] = self.tape
 
         if lob_file is not None:
+            writer = csv.writer(lob_file)
             # Initialize arrays for bids and asks
-            bids_array = []
-            asks_array = []
-
-            # Process bids
-            n_bids = len(self.bids.lob_anon)
-            if n_bids > 0:
-                for lobitem in self.bids.lob_anon:
-                    bids_array.append((lobitem[0], lobitem[1]))  # Append each bid as (price, quantity) tuple
-
-            # Process asks
-            n_asks = len(self.asks.lob_anon)
-            if n_asks > 0:
-                for lobitem in self.asks.lob_anon:
-                    asks_array.append((lobitem[0], lobitem[1]))  # Append each ask as (price, quantity) tuple
-
-            # Create the output array with time, bids, and asks
+            bids_array = [(lobitem[0], lobitem[1]) for lobitem in self.bids.lob_anon]
+            asks_array = [(lobitem[0], lobitem[1]) for lobitem in self.asks.lob_anon]
             output_array = [time, bids_array, asks_array]
+            writer.writerow(output_array)
 
-            # Check if output_array is different from the last recorded one
-            if output_array != self.lob_array:
-                # Format the output array as a CSV-style line
-                lob_file.append(f"{output_array}\n")
-                self.lob_array = output_array
 
         if verbose:
             print('publish_lob: t=%d' % time)
@@ -2373,7 +2357,8 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, dum
         strat_dump.close()
 
     if dump_flags['dump_lobs']:
-        lobframes.close()
+        print("Closing lobframes file.")
+        #lobframes.close()
 
     return exchange.publish_lob(time, lobframes, lob_verbose)
 
