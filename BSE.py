@@ -382,7 +382,7 @@ class Exchange(Orderbook):
             # Initialize arrays for bids and asks
             bids_array = [(lobitem[0], lobitem[1]) for lobitem in self.bids.lob_anon]
             asks_array = [(lobitem[0], lobitem[1]) for lobitem in self.asks.lob_anon]
-            output_array = [time, bids_array, asks_array]
+            output_array = [time, bids_array, self.bids.best_price, asks_array, self.asks.best_price]
             writer.writerow(output_array)
 
 
