@@ -9,9 +9,9 @@ from BSE import market_session
 
 # Simulation parameters
 start_time = 0
-end_time = 60 * 5
+end_time = 600
 chart1_range = (10, 100)
-order_interval = 5
+order_interval = 1
 
 supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
 demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
