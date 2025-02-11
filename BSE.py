@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # BSE: The Bristol Stock Exchange
 #
