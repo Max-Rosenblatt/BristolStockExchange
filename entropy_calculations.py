@@ -9,13 +9,7 @@ def calculate_price_entropy(data):
     return -np.sum(freq * np.log2(freq))
 
 n = 50
-trial_id = '50_traders'
-
-l2_data = trial_id + '_LOB_frames.csv'
-
-# Read in the market data
-market_data = pd.read_csv(l2_data)
-
+trial_id = '40_GVWY_buyers_vs_GVWY_sellers'
 # Data manipulation for entropy calculation
 trades_file = f'{trial_id}_tape.csv'
 
@@ -26,13 +20,23 @@ trades_df.set_index('id', inplace=True)
 trades_df = trades_df.sort_values(by="Time")
 trades_df['returns'] = trades_df['Price'].pct_change().dropna()
 
-binsizes = np.linspace(10, 10000, 100, dtype = int)
+# Scatter plot for trade prices
+plt.scatter(trades_df['Time'], trades_df['Price'], marker='x', color='black')
+plt.ylabel("Trade Price")
+plt.title(f"Trade Prices Over Time")
+
+plt.grid()
+plt.tight_layout()
+plt.show()
+
+binsize = 5000
+window_lengths = np.linspace(1,200, num=100, dtype=int)
 data = []
-for binsize in binsizes:
+for window_length in window_lengths:
     # Bin returns and calculate entropy
     bins = np.linspace(-10, 10, binsize)
     trades_df['returns_binned'] = pd.cut(trades_df['returns'], bins=bins, labels=False)
-    trades_df['Entropy'] = trades_df['returns_binned'].rolling(window=20).apply(
+    trades_df['Entropy'] = trades_df['returns_binned'].rolling(window=window_length).apply(
         lambda x: calculate_price_entropy(x.dropna()))
 
     """
@@ -59,5 +63,5 @@ for binsize in binsizes:
     print(trades_df['Entropy'].mean())
 
 
-plt.plot(binsizes, data, marker = 'x', ls = '')
+plt.plot(window_lengths, data, marker = 'x', ls = '')
 plt.show()

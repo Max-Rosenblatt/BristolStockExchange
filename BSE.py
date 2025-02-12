@@ -141,8 +141,8 @@ class Orderbook_half:
             self.best_price = None
             self.best_tid = None
 
-        if lob_verbose:
-            print(self.lob)
+        #if lob_verbose:
+            #print(self.lob)
 
     def book_add(self, order):
         # add order to the dictionary holding the list of orders

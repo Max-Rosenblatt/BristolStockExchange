@@ -9,23 +9,26 @@ from BSE import market_session
 
 # Simulation parameters
 start_time = 0
-end_time = 600
-chart1_range = (1, 100)
-order_interval = 5
+end_time = 180
+range1 = (10,190)
+range2 = (200,300)
+order_interval = 2
 
-supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
-demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
-order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-poisson'}
+supply_schedule = [ {'from':0, 'to':60, 'ranges':[range1], 'stepmode':'fixed'},
+                    {'from':60, 'to':120, 'ranges':[range2], 'stepmode':'fixed'},
+                    {'from':120, 'to':180, 'ranges':[range1], 'stepmode':'fixed'}]
+demand_schedule = supply_schedule
+order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-fixed'}
 
 verbose = False
-dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': True, 'dump_tape': True}
+dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': False, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = 20
+num_traders = 40
 
 # Define buyer types
-buyer_type = 'ZIC'
-seller_type = 'ZIC'
+buyer_type = 'GVWY'
+seller_type = 'GVWY'
 
 # Loop over each buyer type
 trial_id = f'{num_traders}_{buyer_type}_buyers_vs_{seller_type}_sellers'
@@ -95,12 +98,13 @@ with open(prices_fname, newline='') as csvfile:
 
 # Plot bid and ask prices against time on the same axes
 plt.figure(figsize=(12, 6))
-plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades', markersize=12)
+plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades', markersize=2)
 #plt.plot(times, best_bids, label='Highest Bid Price', color='blue', marker='.', linestyle='')
 #plt.plot(times, best_asks, label='Lowest Ask Price', color='darkseagreen', marker='.', linestyle='')
 plt.xlabel('Time (s)')
 plt.ylabel('Prices (£)')
 plt.title(f"{num_traders} {buyer_type} Bidders vs. {num_traders} {seller_type} Sellers")  # Update title with current buyer type
+plt.xlim(start_time, end_time)
 plt.legend()
 plt.grid(True)
 plt.show()

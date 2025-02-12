@@ -10,7 +10,7 @@ from BSE import market_session
 start_time = 0
 end_time = 600
 chart1_range = (1, 100)
-order_interval = 10
+order_interval = 1
 
 supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
 demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
@@ -20,10 +20,10 @@ verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': True, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = 50
+num_traders = 5
 
 # Define buyer types
-buyer_types = ['ZIP']
+buyer_types = ['ZIP', 'ZIC', 'GVWY', 'SHVR', 'SNPR']
 seller_type = 'ZIC'
 
 # Loop over each buyer type
@@ -52,22 +52,15 @@ for buyer_type in buyer_types:
             bid_best = row[2]
             ask_best = row[4]
 
-            bid_prices = [bid[0] for bid in bids]  # Extract the price from each bid tuple
-            ask_prices = [ask[0] for ask in asks]  # Extract the price from each ask tuple
-
-
             # Append bid prices
             for bid in bids:
-                bid_price = bid[0]  # Get the bid price (first element of the tuple)
-                time_price_pairs_bids.append((time, bid_price))  # Add tuple of (time, bid price)
+                price = bid[0]  # Get the bid price (first element of the tuple)
+                time_price_pairs_bids.append((time, price))  # Add tuple of (time, bid price)
 
             # Append ask prices
             for ask in asks:
-                ask_price = ask[0]  # Get the ask price (first element of the tuple)
-                time_price_pairs_ask.append((time, ask_price))  # Add tuple of (time, ask price)
-
-
-
+                price = ask[0]  # Get the ask price (first element of the tuple)
+                time_price_pairs_ask.append((time, price))  # Add tuple of (time, ask price)
 
             if bid_best != '':
                 bid_best = float(bid_best)
@@ -99,3 +92,17 @@ for buyer_type in buyer_types:
             price = float(row[2])
             trade_times.append(time)
             trade_prices.append(price)
+
+    # Plot bid and ask prices against time on the same axes
+    plt.figure(figsize=(12, 6))
+    plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades', markersize=12)
+    plt.plot(times, best_bids, label='Highest Bid Price', color='blue', marker='.', linestyle='')
+    plt.plot(times, best_asks, label='Lowest Ask Price', color='darkseagreen', marker='.', linestyle='')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Prices (£)')
+    plt.title(f"'{buyer_type}' Bidders vs. '{seller_type}' Sellers")  # Update title with current buyer type
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(f"{buyer_type}_Bidders_{seller_type}_Sellers.png")
+    plt.show()
+
