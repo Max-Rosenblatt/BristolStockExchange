@@ -27,8 +27,8 @@ dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, '
 num_traders = 40
 
 # Define buyer types
-buyer_type = 'GVWY'
-seller_type = 'GVWY'
+buyer_type = 'ZIP'
+seller_type = 'ZIP'
 
 # Loop over each buyer type
 trial_id = f'{num_traders}_{buyer_type}_buyers_vs_{seller_type}_sellers'
