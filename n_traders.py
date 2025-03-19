@@ -23,8 +23,8 @@ dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, '
 num_traders = 5
 
 # Define buyer types
-buyer_types = ['ZIP', 'ZIC', 'GVWY', 'SHVR', 'SNPR']
-seller_type = 'ZIC'
+buyer_types = ['ZIP']
+seller_type = 'ZIP'
 
 # Loop over each buyer type
 for buyer_type in buyer_types:

@@ -1,9 +1,6 @@
-from turtledemo.penrose import start
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import csv
 
 #Functions _________________________
 
@@ -100,14 +97,14 @@ if __name__ == "__main__":
                       'dump_tape': True}
 
         # Loop over different numbers of traders
-        num_traders = np.linspace(10,100,30,dtype=int)
+        num_traders = [100]
 
         for n in num_traders:
 
             # Define buyer types
-            buyer_types = ['SHVR', 'GVWY', 'ZIP', 'ZIC']
+            buyer_types = ['ZIP']
             for buyer_type in buyer_types:
-                seller_type = 'GVWY'
+                seller_type = 'ZIP'
 
                 trial_id = f'test'
 
@@ -181,27 +178,21 @@ if __name__ == "__main__":
                 trades_df.set_index('id', inplace=True)
                 trades_df = trades_df.sort_values(by="Time")
                 trades_df['returns'] = trades_df['Price'].pct_change().dropna()
-                bins = np.linspace(-10, 10, 100)
+                bins = np.linspace((trades_df['returns'].min())*2, (trades_df['returns'].max())*2, 1000)
                 trades_df['returns_binned'] = pd.cut(trades_df['returns'], bins=bins, labels=False)
-                trades_df['Entropy'] = trades_df['returns_binned'].rolling(window=10).apply(lambda x: calculate_price_entropy(x.dropna()))
+                trades_df['Entropy'] = trades_df['returns_binned'].rolling(window=50).apply(lambda x: calculate_price_entropy(x.dropna()))
                 mean_entropy = trades_df['Entropy'].mean()
                 new_row = {'buyer': buyer_type, 'n_traders': n, 'avg_entropy': mean_entropy}
                 output = pd.concat([output, pd.DataFrame([new_row])], ignore_index=True)
-                print(f'{n}/{num_traders.max()}, {buyer_type}')
                 output.to_csv('output.csv', index=True)
 
 
 
-filtered_output = output[output['buyer'] == 'GVWY']
-plt.plot(output['n_traders'], output['avg_entropy'], ls = '', marker = 'x', color = 'grey')
-plt.show()
 
 
 
 
 
-
-"""
     # Plot bid and ask entropy only when they change
     fig, axs = plt.subplots(2, 1, figsize=(20,20))  # 1 row, 2 columns
 
@@ -223,4 +214,3 @@ plt.show()
 
     # Show the plot
     plt.show()
-"""

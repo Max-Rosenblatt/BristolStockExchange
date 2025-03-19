@@ -24,10 +24,9 @@ verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': False, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = np.linspace(10,100, 10,dtype=int)
-
+num_traders = [50]
 # Define buyer types
-buyer_types = ['ZIP', 'ZIC', 'GVWY', 'SHVR']
+buyer_types = ['ZIP']
 seller_types = buyer_types
 
 for n in num_traders:
@@ -42,7 +41,7 @@ for n in num_traders:
             traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
             # Fixed parameters
-            n_bins = 500
+            n_bins = 2000
             window_length = 50  # Fixed rolling window
 
             # Run market session
@@ -104,6 +103,7 @@ for n in num_traders:
             plt.ylabel('Frequency')
             plt.title(f'Price Change Distribution: {seller} Sellers, {buyer} Buyers ({n})')
             plt.grid(axis='y', linestyle='--', alpha=0.7)
+            plt.ylim(70,160)
 
             # Show the combined plot
             plt.show()
