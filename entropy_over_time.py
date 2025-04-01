@@ -24,7 +24,7 @@ verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': False, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = [50]
+num_traders = [25]
 # Define buyer types
 buyer_types = ['ZIP']
 seller_types = buyer_types

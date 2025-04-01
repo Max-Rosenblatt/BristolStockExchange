@@ -218,7 +218,7 @@ class Orderbook(Orderbook_half):
         self.bids = Orderbook_half('Bid', bse_sys_minprice)
         self.asks = Orderbook_half('Ask', bse_sys_maxprice)
         self.tape = []
-        self.tape_length = 10000    # max number of events on tape (so we can do millions of orders without crashing)
+        self.tape_length = 10000000    # max number of events on tape (so we can do millions of orders without crashing)
         self.quote_id = 0           # unique ID code for each quote accepted onto the book
         self.lob_array = []
 

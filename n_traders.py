@@ -9,8 +9,8 @@ from BSE import market_session
 # Simulation parameters
 start_time = 0
 end_time = 600
-chart1_range = (1, 100)
-order_interval = 1
+chart1_range = (100, 200)
+order_interval = 10
 
 supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
 demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [chart1_range], 'stepmode': 'fixed'}]
@@ -20,11 +20,11 @@ verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': True, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = 5
+num_traders = 50
 
 # Define buyer types
-buyer_types = ['ZIP']
-seller_type = 'ZIP'
+buyer_types = ['ZIC']
+seller_type = 'GVWY'
 
 # Loop over each buyer type
 for buyer_type in buyer_types:

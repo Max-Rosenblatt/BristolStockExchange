@@ -23,7 +23,7 @@ df = df.sort_values(by='Date')
 # Calculate percentage changes
 df['Pct_Change'] = df['Close/Last'].pct_change()
 
-bins = np.linspace(df['Pct_Change'].min()*2, df['Pct_Change'].max()*2, 2000)
+bins = np.linspace(df['Pct_Change'].min()*1.1, df['Pct_Change'].max()*1.1, 2000)
 df['returns_binned'] = pd.cut(df['Pct_Change'], bins=bins, labels=False, duplicates='drop')
 df['Entropy'] = df['returns_binned'].rolling(window=100).apply(
     lambda x: calculate_price_entropy(x.dropna()))
@@ -34,10 +34,11 @@ fig, ax1 = plt.subplots(figsize=(12, 6))
 ax1.set_xlabel('Date')
 ax1.set_ylabel('Closing Price Change vs Previous Day/%')
 #ax1.plot(df['Date'], df['Pct_Change'], marker='x', linestyle=' ', color='black', label='Closing Price', markersize = 2)
-#ax1.plot(df['Date'], df['Close/Last'], marker='x', linestyle=' ', color='black', label='Closing Price', markersize = 2)
-ax1.bar(df['Date'], df['Pct_Change'], color='black', alpha=0.6, label='Percentage Change')
+ax1.plot(df['Date'], df['Close/Last'], marker='x', linestyle=' ', color='black', label='Closing Price', markersize = 2)
+#ax1.bar(df['Date'], df['Pct_Change'], color='black', alpha=0.6, label='Percentage Change')
 ax1.tick_params(axis='y')
 ax1.legend(loc='upper left')
+ax1.set_xlim(pd.Timestamp('2017-01-01'), pd.Timestamp('2022-12-31'))
 
 ax2 = ax1.twinx()
 ax2.set_ylabel('Entropy/Bits')

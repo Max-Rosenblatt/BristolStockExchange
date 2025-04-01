@@ -31,8 +31,8 @@ for i, trader_type in enumerate(trader_types):
     trial_id = f'Test_{trader_type}_traders'
 
     # Specify sellers and buyers using the current trader type
-    sellers_spec = [('ZIP', 2)]
-    buyers_spec = [(trader_type, 10)]
+    sellers_spec = [('ZIP', 25)]
+    buyers_spec = [(trader_type, 25)]
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
     # Run the market session

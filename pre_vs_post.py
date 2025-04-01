@@ -2,15 +2,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from BSE import market_session
+import math
 
 # Global state variables
 market_state = {
     'price': 100,  # Initial price level
     'drift': 0.01,  # Small upward drift to reflect overall growth
-    'volatility': 0.1,  # Volatility of price movement
     'crash_active': False,
     'crash_start_time': None,
-    'crash_factor': 0.9
 }
 
 shock_times = []  # Store times when market crashes
@@ -22,39 +21,61 @@ def calculate_price_entropy(data):
     freq = data.value_counts(normalize=True)
     return -np.sum(freq * np.log2(freq))
 
+
 def schedule_offsetfn(t):
-    global market_state
+    global market_state, shock_times
+    # Update volatility relative to current price (scale with price)
+    market_state['volatility'] = 0.0005 * market_state['price']
 
-    # Brownian motion (random walk with drift)
+    # Standard price update: Brownian motion with drift
     var = np.random.normal(loc=market_state['drift'], scale=market_state['volatility'])
-    market_state['price'] += var  # Apply Brownian motion
+    market_state['price'] += var
 
-    # Crash probability increases over time (e.g., exponential growth)
-    crash_prob = 0.001
+    # Occasional small jump to simulate microstructure noise (random event)
+    if np.random.random() < 0.001:  # low probability for minor jump
+        small_jump = np.random.normal(0, 0.01 * market_state['price'])
+        market_state['price'] += small_jump
 
-    # Trigger a crash
-    if not market_state['crash_active'] and np.random.rand() < crash_prob:
+    # Trigger a major crash at a fixed time (t = 300 seconds)
+    if (not market_state.get('crash_active', False) and
+            market_state.get('crash_start_time') is None and
+            math.floor(t) == 300):
         market_state['crash_active'] = True
         market_state['crash_start_time'] = t
-        market_state['crash_price'] = market_state['price']  # Store price at crash
-        market_state['price'] *= market_state['crash_factor']  # Instant drop
-        shock_times.append(market_state['crash_start_time'])  # Track shock time
-        print(f"Market crash at t={t}")
+        market_state['crash_price'] = market_state['price']
+        # Use a random factor to simulate variability in crash severity (e.g., 20-40% drop)
+        crash_jump_factor = np.random.uniform(0.6, 0.8)
+        market_state['price'] = market_state['crash_price'] * crash_jump_factor
+        market_state['negative_drift_duration'] = 60  # seconds of extra downward pressure (panic selling)
+        shock_times.append(t)  # record the shock time for plotting
+        print(
+            f"Market crash at t={t}, price dropped to {market_state['price']:.2f} with factor {crash_jump_factor:.2f}")
 
-    # Apply gradual recovery using exponential approach
-    if market_state['crash_active']:
-        recovery_strength = 0.001
+    # During the negative drift phase (panic selling), apply additional downward pressure
+    if market_state.get('negative_drift_duration', 0) > 0:
+        negative_drift = -0.5  # extra downward pressure
+        market_state['price'] += negative_drift * market_state['volatility']
+        market_state['negative_drift_duration'] -= 1
 
-        # Apply recovery but also dampen randomness pulling it down too far
-        target_price = market_state['crash_price']  # The price before crash
+    # After the negative drift phase, if a crash is active, simulate recovery with high volatility
+    if market_state.get('crash_active', False) and market_state.get('negative_drift_duration', 0) <= 0:
+        # Spike volatility to reflect market panic during the recovery phase
+        spike_volatility = 2 * market_state['volatility']
+        recovery_noise = np.random.normal(loc=market_state['drift'], scale=spike_volatility)
+        market_state['price'] += recovery_noise
+
+        # Exponential recovery toward the pre-crash price
+        recovery_strength = 0.005
+        target_price = market_state['crash_price']
         market_state['price'] += (target_price - market_state['price']) * recovery_strength
 
-
-        # Stop recovery when almost fully recovered
-        if abs(market_state['price']/target_price) > 0.98: # Slightly relaxed condition
+        # When price nears the pre-crash level, end the crash period
+        if market_state['price'] >= target_price * 0.98:
             market_state['crash_active'] = False
+            print(f"Market recovery complete at t={t}, price back to {market_state['price']:.2f}")
 
     return int(round(market_state['price'], 0))
+
 
 rangeS = (100, 100, schedule_offsetfn)
 rangeD = rangeS
@@ -62,7 +83,7 @@ rangeD = rangeS
 # Simulation parameters
 start_time = 0
 end_time = 600
-order_interval = 10
+order_interval = 5
 
 supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [rangeS], 'stepmode': 'jittered'}]
 demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [rangeD], 'stepmode': 'jittered'}]
@@ -86,14 +107,14 @@ seller_types = buyer_types
 for n in num_traders:
     for seller in seller_types:
         for buyer in buyer_types:
-            trial_id = f'{n}_{buyer}B_{seller}S'
-            buyers_spec = [('GVWY',10),('SHVR',10),('ZIC',10),('ZIP',10)]
+            trial_id = f'test'
+            buyers_spec = [('GVWY',25),('SHVR',25),('ZIC',25),('ZIP',25)]
             sellers_spec = buyers_spec
             traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
             # Fixed parameters for bins and time window
             n_bins = 2000
-            time_window = 30  # rolling window of 50 seconds
+            time_window = 30
 
             # Run market session
             market_session(trial_id, start_time, end_time, traders_spec, order_sched, dump_flags, verbose)
@@ -174,4 +195,13 @@ for n in num_traders:
             # Print out the average entropy for each period
             print("Average Entropy 1 minute pre shock:", pre_shock['Entropy'].mean())
             print("Average Entropy 1 minute post shock:", post_shock['Entropy'].mean())
+
+
+import seaborn as sns
+plt.figure(figsize=(10,5))
+sns.histplot(trades_df['returns'].dropna(), bins=50, kde=True)
+plt.title("Distribution of Returns")
+plt.xlabel("Returns")
+plt.ylabel("Frequency")
+plt.show()
 

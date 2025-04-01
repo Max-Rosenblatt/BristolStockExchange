@@ -9,14 +9,12 @@ from BSE import market_session
 
 # Simulation parameters
 start_time = 0
-end_time = 180
+end_time = 60
 range1 = (10,190)
 range2 = (200,300)
-order_interval = 2
+order_interval = 10
 
-supply_schedule = [ {'from':0, 'to':60, 'ranges':[range1], 'stepmode':'fixed'},
-                    {'from':60, 'to':120, 'ranges':[range2], 'stepmode':'fixed'},
-                    {'from':120, 'to':180, 'ranges':[range1], 'stepmode':'fixed'}]
+supply_schedule = [ {'from':0, 'to':60, 'ranges':[range1], 'stepmode':'fixed'}]
 demand_schedule = supply_schedule
 order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-fixed'}
 
@@ -24,7 +22,7 @@ verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': False, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = 40
+num_traders = 100
 
 # Define buyer types
 buyer_type = 'ZIP'
@@ -98,12 +96,11 @@ with open(prices_fname, newline='') as csvfile:
 
 # Plot bid and ask prices against time on the same axes
 plt.figure(figsize=(12, 6))
-plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades', markersize=2)
+plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades')
 #plt.plot(times, best_bids, label='Highest Bid Price', color='blue', marker='.', linestyle='')
 #plt.plot(times, best_asks, label='Lowest Ask Price', color='darkseagreen', marker='.', linestyle='')
 plt.xlabel('Time (s)')
 plt.ylabel('Prices (£)')
-plt.title(f"{num_traders} {buyer_type} Bidders vs. {num_traders} {seller_type} Sellers")  # Update title with current buyer type
 plt.xlim(start_time, end_time)
 plt.legend()
 plt.grid(True)
