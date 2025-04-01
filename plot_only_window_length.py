@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from entropy_over_time import range1, range2
+from simpleshock_v1 import range1, range2
 
 from BSE import market_session
 

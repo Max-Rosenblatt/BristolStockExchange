@@ -27,7 +27,7 @@ for n in num_traders:
     for seller in seller_types:
         for buyer in buyer_types:
             trial_id = f'{n}_{buyer}B_{seller}S'
-            trades_file = f'{trial_id}_tape.csv'
+            trades_file = f'data/{trial_id}_tape.csv'
 
             try:
                 # Read trade data

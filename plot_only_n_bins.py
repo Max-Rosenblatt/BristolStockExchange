@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from astropy.utils.metadata.utils import dtype
 
 from BSE import market_session
 
