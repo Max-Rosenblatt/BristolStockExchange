@@ -7,7 +7,7 @@ import math
 # Global state variables
 market_state = {
     'price': 100,  # Initial price level
-    'drift': 0.01,  # Small upward drift to reflect overall growth
+    'drift': 1e-5,  # Small upward drift to reflect overall growth
     'crash_active': False,
     'crash_start_time': None,
 }
@@ -25,7 +25,7 @@ def calculate_price_entropy(data):
 def schedule_offsetfn(t):
     global market_state, shock_times
     # Update volatility relative to current price (scale with price)
-    market_state['volatility'] = 0.0005 * market_state['price']
+    market_state['volatility'] = 5e-6 * market_state['price']
 
     # Standard price update: Brownian motion with drift
     var = np.random.normal(loc=market_state['drift'], scale=market_state['volatility'])
@@ -83,12 +83,12 @@ rangeD = rangeS
 # Simulation parameters
 start_time = 0
 end_time = 600
-order_interval = 5
+order_interval = 1
 
 supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [rangeS], 'stepmode': 'jittered'}]
 demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [rangeD], 'stepmode': 'jittered'}]
 
-order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-poisson'}
+order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-fixed'}
 
 verbose = False
 dump_flags = {
@@ -114,7 +114,7 @@ for n in num_traders:
 
             # Fixed parameters for bins and time window
             n_bins = 2000
-            time_window = 30
+            time_window = 60
 
             # Run market session
             market_session(trial_id, start_time, end_time, traders_spec, order_sched, dump_flags, verbose)

@@ -3,18 +3,21 @@ import matplotlib.pyplot as plt
 plt.rcParams['figure.dpi'] = 300
 import numpy as np
 import csv
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+plt.rcParams.update({'font.size': 24})
+
 
 from BSE import market_session
 
 
 # Simulation parameters
 start_time = 0
-end_time = 60
-range1 = (10,190)
-range2 = (200,300)
-order_interval = 10
+end_time = 300
+range1 = (100,150)
+order_interval = 1
 
-supply_schedule = [ {'from':0, 'to':60, 'ranges':[range1], 'stepmode':'fixed'}]
+supply_schedule = [ {'from':0, 'to':300, 'ranges':[range1], 'stepmode':'fixed'}]
 demand_schedule = supply_schedule
 order_sched = {'sup': supply_schedule, 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-fixed'}
 
@@ -22,11 +25,11 @@ verbose = False
 dump_flags = {'dump_blotters': False, 'dump_lobs': True, 'dump_strats': False, 'dump_avgbals': False, 'dump_tape': True}
 
 # Loop over different numbers of traders
-num_traders = 100
+num_traders = 50
 
 # Define buyer types
 buyer_type = 'ZIP'
-seller_type = 'ZIP'
+seller_type = 'GVWY'
 
 # Loop over each buyer type
 trial_id = f'{num_traders}_{buyer_type}_buyers_vs_{seller_type}_sellers'
@@ -95,14 +98,18 @@ with open(prices_fname, newline='') as csvfile:
         trade_prices.append(price)
 
 # Plot bid and ask prices against time on the same axes
-plt.figure(figsize=(12, 6))
-plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades')
+plt.figure(figsize=(14, 7))
+plt.plot(trade_times, trade_prices, 'x', color='black', label='Trades', markersize = 5, zorder=5)
 #plt.plot(times, best_bids, label='Highest Bid Price', color='blue', marker='.', linestyle='')
 #plt.plot(times, best_asks, label='Lowest Ask Price', color='darkseagreen', marker='.', linestyle='')
-plt.xlabel('Time (s)')
-plt.ylabel('Prices (£)')
+plt.xlabel('Time/s')
+plt.ylabel('Asset Price')
 plt.xlim(start_time, end_time)
-plt.legend()
-plt.grid(True)
+plt.ylim(100,150)
+#plt.axhspan(ymin = 100, ymax = 150, color = 'grey', alpha = 0.5, hatch='\\', zorder = 4, label = 'Customer Order Price Range')
+#plt.legend(fontsize='small')
+plt.savefig('ZICvsZIC_noshock.png', dpi = 300)
 plt.show()
+
+
 
